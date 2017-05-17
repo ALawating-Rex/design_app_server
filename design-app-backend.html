@@ -1,0 +1,80 @@
+<html>
+<head>
+    <title>app 设计思路 - 服务端</title>
+    <basefont face="微软雅黑" size="2"/>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <style>
+        body, td {
+            font-family: 微软雅黑;
+            font-size: 10pt;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <span><div><span style="font-size: 32px;"><b>app 设计思路 - 服务端</b></span></div><div><br/></div><div><span
+                style="font-size: 24px;">                                                  ---By aex</span></div><div>
+            <span style="font-size: 24px;"><br/></span></div><div>在线阅读地址：<a href="http://www.share345.com/books/design-app-backend/design-app-backend.html">http://www.share345.com/books/design-app-backend/design-app-backend.html</a></div><div><span
+                style="font-size: 24px;">     </span></div><div><span style="font-size: 24px;">前言</span></div><div><br/>
+        </div><div>     文章是根据实际项目设计以及理想状态下的优化方案，分享的app 设计思路。文章有很多不成熟甚至不合理的地方欢迎指点。</div><div>
+                 希望通过阅读理解文章可以帮助你做好APP开发或者服务端接口开发之前的准备工作，文章会尽量总结遇到的坑以及设计过程中总结的问题。
+        </div><div><br/></div><div><br/></div><div><img src="Design-App-For-Backend-Developer_files/服务端客户端通信图.png"
+                                                        type="image/png" style="height: auto;"/></div><div><span
+                style="font-size: 24px;">版本控制</span></div><div>   
+             服务端接口要做好版本控制，除非客户端只维护一个版本，那么意味着每次都要强制升级App，但是一般不会这么做。
+        </div><div>     版本控制的目录结构：</div><div><br/></div><div> <img
+                src="Design-App-For-Backend-Developer_files/Image.png" type="image/png" style="height: auto;"/>   <img
+                src="Design-App-For-Backend-Developer_files/Image [1].png" type="image/png" style="height: auto;"/>
+        </div><div><br/></div><div>第二种添加了区分不同平台，默认都走Default 代码，这样分的更细但是也增加了维护成本。</div><div>相应的访问资源的路由也可以采用两种方式：</div><div>
+            一种就是通过 app 传参 平台(os)和版本(version) 来执行不同代码；
+        </div><div>另一种是访问资源 URL 使用类似方式  /v1/getCustomer/id/10  /v2/getCustomer/id/10。</div><div>不同的版本维护不同 key，用于版本认证的
+            user auth 数据表举例：
+        </div><div>表：app_user_auth</div><div><br/></div><table
+            style="-evernote-table:true;border-collapse:collapse;table-layout:fixed;margin-left:0px;width:100%;">
+            <tr>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                    <div>user_id</div>
+                </td>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                    <div>user_auth</div>
+                </td>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                    <div>sercet_key</div>
+                </td>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                    <div>os</div>
+                </td>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                    <div>created_at</div>
+                </td>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                    <div>updated_at</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                    <div><br/></div>
+                </td>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                    <div><br/></div>
+                </td>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                    <div><br/></div>
+                </td>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                    <div><br/></div>
+                </td>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                    <div><br/></div>
+                </td>
+                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                    <div><br/></div>
+                </td>
+            </tr>
+        </table><div><br/></div><div>user_id 为自增id字段</div><div>user_auth 和 secret_key 分别是 认证的用户名 和 key 用于完成之后通信的 加解密
+        </div><div>os 为平台</div><div>created_at 创建时间</div><div>updated_at 更新时间</div><div><br/></div><div><br/></div><div>
+            <br/></div></span>
+</div>
+</body>
+</html> 
