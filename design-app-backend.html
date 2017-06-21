@@ -270,14 +270,16 @@
                 <div><br/></div>
             </td>
         </tr>
-    </table><div><br/></div><div>id 为自增主键</div><div>customer_id 为用户id</div><div>token 为会话id（不可重复）</div><div>user_id
-        是表 app_user 的user_id 用于找到加解密使用 de_key
+    </table><div><br/></div><div>id 为自增主键</div><div>customer_id 为用户id</div><div>token 为会话id（不可重复）</div><div>user_id 是表
+        app_user 的user_id 用于找到加解密使用 de_key
     </div><div>成功调用 get_server() 接口，添加一行数据 完善 token, user_id, created_at, updated_at  之后每次调用其它接口都更新下 updated_at
         （判断过期与否是当前时间和 updated_at 做比较），直到用户登录完善 customer_id
-    </div><div>这里存在几种情况：</div><div>1.用户之前从未登录过： 那么直接更新这一行数据 添上 customer_id 即可</div><div>2.用户之前登录过: 那么可以将token,
-        user_id, updated_at 更新到原来那行数据，然后删除此条数据（当然也可以反过来，保留最新这条数据，删除以前的。但无论那种都要采用事务，保证完成）
-    </div><div><br/></div><div><span style="font-size: 16px;"><span style="font-size: 19px;">4.2 发送设备标识接口——send_flag()</span></span>
-    </div><div>     用于后续发送推送等需求。</div><div>     接口调用优先级：系统启动时候调用即可</div><div>     请求参数：（固定的参数忽略）</div><table
+    </div><div>这里存在几种情况：</div><div>1.用户之前从未登录过： 那么直接更新这一行数据 添上 customer_id 即可</div><div>2.用户之前登录过: 那么可以将token, user_id,
+        updated_at 更新到原来那行数据，然后删除此条数据（当然也可以反过来，保留最新这条数据，删除以前的。但无论那种都要采用事务，保证完成）
+    </div><div><br/></div><div><span style="font-size: 16px;"><span
+            style="font-size: 19px;">4.2 发送设备标识接口——send_flag()</span></span></div><div>     用于后续发送推送等需求。</div><div>   
+         接口调用优先级：系统启动时候调用即可
+    </div><div>     请求参数：（固定的参数忽略）</div><table
             style="-evernote-table:true;border-collapse:collapse;table-layout:fixed;margin-left:0px;width:100%;">
         <tr>
             <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20.209059233449477%;">
@@ -332,7 +334,6 @@
         </tr>
     </table><div>     返回参数：（固定的参数忽略）</div><table
             style="-evernote-table:true;border-collapse:collapse;margin-left:0px;table-layout:fixed;width:100%;">
-        <tbody>
         <tr>
             <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:20.209059233449477%;">
                 <div>参数名</div>
@@ -383,32 +384,30 @@
             <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
                 <br/></td>
         </tr>
-        </tbody>
     </table><div><br/></div><div>     正常情况下，每个设备都能获取到对应的唯一标识，用于完成消息的推送，Android手机通常根据 MEI
         来做标识，但是仍然存在获取不到的情况，所以此时服务端就要生成一个随机的且唯一的标识返回给客户端。客户端接收到参数保存下来即可。
-    </div><div>     如下是设备标识列表数据表设计举例：</div><div>app_equipment_flag</div><div><br/></div><table
-            style="-evernote-table:true;border-collapse:collapse;width:100%;table-layout:fixed;margin-left:0px;">
-        <tbody>
+    </div><div>     如下是设备标识列表数据表设计举例：</div><div>app_equipment_flag</div><table
+            style="-evernote-table:true;border-collapse:collapse;table-layout:fixed;margin-left:0px;width:100%;">
         <tr>
-            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.285714285714285%;">
                 <div>id</div>
             </td>
-            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.285714285714285%;">
                 <div>flag</div>
             </td>
-            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.285714285714285%;">
                 <div>badge</div>
             </td>
-            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.285714285714285%;">
                 <div>token</div>
             </td>
-            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.285714285714285%;">
                 <div>customer_id</div>
             </td>
-            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.285714285714285%;">
                 <div>os</div>
             </td>
-            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.21602787456446%;">
                 <div>version</div>
             </td>
         </tr>
@@ -435,7 +434,6 @@
                 <div><br/></div>
             </td>
         </tr>
-        </tbody>
     </table><div><br/></div><div>id 为自增主键</div><div>flag 为设备的唯一标识</div><div>badge 角标，通常 iOS 设备会有角标</div><div>token
         会话id
     </div><div>customer_id 用户id</div><div>os 设备平台 iOS 或者 Android</div><div>version app版本</div><div>成功调用 send_flag()
@@ -497,10 +495,9 @@
             </td>
         </tr>
     </table><div>     返回参数：（固定的参数忽略） 返回成功或失败即可</div><div>     </div><div><span style="font-size: 16px;"><span
-            style="font-size: 19px;">4.3 升级检测——check_version()</span></span></div><div>     用于检测是否有新版本，并提示升级。
-    </div><div>     接口调用优先级：启动成功后调用，有些app在设置里有检测最新版本功能，在那里也可以调用此接口</div><div>     </div><div> 请求参数：（固定的参数忽略）
-        不需要其它参数
-    </div><div><br/></div><div> 返回参数：（固定的参数忽略）</div><table
+            style="font-size: 19px;">4.3 升级检测——check_version()</span></span></div><div>     用于检测是否有新版本，并提示升级。</div><div>
+             接口调用优先级：启动成功后调用，有些app在设置里有检测最新版本功能，在那里也可以调用此接口
+    </div><div>     </div><div> 请求参数：（固定的参数忽略） 不需要其它参数</div><div><br/></div><div> 返回参数：（固定的参数忽略）</div><table
             style="-evernote-table:true;border-collapse:collapse;margin-left:0px;table-layout:fixed;width:100%;">
         <tr>
             <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:20.209059233449477%;">
@@ -589,7 +586,102 @@
                 <div><br/></div>
             </td>
         </tr>
-    </table>
+    </table><div><br/></div><div><span style="font-size: 24px;">5. 一般接口设计</span></div><div>   
+         一般的接口的实现逻辑大致为：先统一接收参数经统一函数处理（解密、validate判断） 后交给数据层验证 token 是否可用和是否过期，检测无误后检测登录，
+    </div><div>根据接口的实际情况判断是否需要必须登录，做后续逻辑处理。在实际的业务逻辑层执行之前可以先判断缓存是否命中，命中结合动态数据后直接返回。未命中或不需要</div><div>
+        缓存则执行业务逻辑代码，执行成功根据实际情况生成缓存并将数据交给数据响应函数统一返回。
+    </div><div><br/></div><div><span style="font-size: 24px;">6. 推送设计</span></div><div>     iOS 有自己的推送服务 APNs 当然也可以和
+        Android 都采用同一个平台的推送服务， Jpush(极光推送)或者友盟推送服务等。
+    </div><div>推送消息可以是推送活动信息，推送状态信息例如订单状态，物流信息等。关联的就需要设计推送给谁，推送时间，推送动作等。</div><div>推送消息列表数据表设计举例：</div><div>
+        app_messages
+    </div><table style="border-collapse: collapse; margin-left: 0px;table-layout:fixed;width:90.5226480836237%;">
+        <tr>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:4.157043879907621%;">
+                <div>id</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:6.235565819861432%;">
+                <div>title</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:7.313317936874519%;">
+                <div>content</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:8.314087759815243%;">
+                <div>operation</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:8.468052347959969%;">
+                <div>image</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:7.236335642802155%;">
+                <div>platform</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:8.314087759815243%;">
+                <div>version</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:8.237105465742879%;">
+                <div>customer_id</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:7.005388760585066%;">
+                <div>flag</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:7.236335642802155%;">
+                <div>is_show</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:10.700538876058506%;">
+                <div>created_time</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:16.705157813702847%;">
+                <div>send_time</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:12.5%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:12.5%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:6.25%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:6.25%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:6.25%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:6.25%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:6.25%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:3.125%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:3.125%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:12.5%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:12.5%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:12.5%;">
+                <div><br/></div>
+            </td>
+        </tr>
+    </table><div><br/></div><div>id 为自增主键</div><div>title 为消息标题</div><div>content 为消息内容</div><div>operation
+        为消息点击后触发的动作（和客户端协商如何处理动作）
+    </div><div>image 为消息的图片</div><div>platform 为消息推送给的平台</div><div>version 为消息推送给的app版本</div><div>customer_id
+        为消息推送给的用户
+    </div><div>flag 为消息推送给的设备标识</div><div>is_show 是否显示通过推送显示</div><div>created_time 为消息创建的时间</div><div>send_time
+        为消息发送时间（可以通过队列处理要发送的消息）
+    </div><div><br/></div><div>队列处理消息数据表中的内容，到发送时间的消息被推送出去，推送如果根据平台那么就结合表 app_equipment_flag 找到合适的平台推送推送消息给他们。同理version,
+        customer_id, flag
+    </div><div>operation需要服务端开发者和客户端开发者协商数据格式相应不同的操作例如：</div><div>scheme://jumpUrl/?url=xxx.com/activity.html  协商为点击跳转到
+        H5 页面。（这个规则可以同时适用于 H5 和 原生交互规则 ）
+    </div><div>这个消息表还可以用于显示在app 的消息功能列表中。</div>
     </span>
 </div>
 </body>
