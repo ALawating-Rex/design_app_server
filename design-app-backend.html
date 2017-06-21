@@ -14,67 +14,583 @@
 
 <div>
     <span><div><span style="font-size: 32px;"><b>app 设计思路 - 服务端</b></span></div><div><br/></div><div><span
-                style="font-size: 24px;">                                                  ---By aex</span></div><div>
-            <span style="font-size: 24px;"><br/></span></div><div>在线阅读地址：<a href="http://www.share345.com/books/design-app-backend/design-app-backend.html">http://www.share345.com/books/design-app-backend/design-app-backend.html</a></div><div><span
-                style="font-size: 24px;">     </span></div><div><span style="font-size: 24px;">前言</span></div><div><br/>
-        </div><div>     文章是根据实际项目设计以及理想状态下的优化方案，分享的app 设计思路。文章有很多不成熟甚至不合理的地方欢迎指点。</div><div>
-                 希望通过阅读理解文章可以帮助你做好APP开发或者服务端接口开发之前的准备工作，文章会尽量总结遇到的坑以及设计过程中总结的问题。
-        </div><div><br/></div><div><br/></div><div><img src="Design-App-For-Backend-Developer_files/服务端客户端通信图.png"
-                                                        type="image/png" style="height: auto;"/></div><div><span
-                style="font-size: 24px;">版本控制</span></div><div>   
-             服务端接口要做好版本控制，除非客户端只维护一个版本，那么意味着每次都要强制升级App，但是一般不会这么做。
-        </div><div>     版本控制的目录结构：</div><div><br/></div><div> <img
-                src="Design-App-For-Backend-Developer_files/Image.png" type="image/png" style="height: auto;"/>   <img
-                src="Design-App-For-Backend-Developer_files/Image [1].png" type="image/png" style="height: auto;"/>
-        </div><div><br/></div><div>第二种添加了区分不同平台，默认都走Default 代码，这样分的更细但是也增加了维护成本。</div><div>相应的访问资源的路由也可以采用两种方式：</div><div>
-            一种就是通过 app 传参 平台(os)和版本(version) 来执行不同代码；
-        </div><div>另一种是访问资源 URL 使用类似方式  /v1/getCustomer/id/10  /v2/getCustomer/id/10。</div><div>不同的版本维护不同 key，用于版本认证的
-            user auth 数据表举例：
-        </div><div>表：app_user_auth</div><div><br/></div><table
+            style="font-size: 24px;">                                                  ---By Aex</span></div><div>
+        <span style="font-size: 24px;"><br/></span></div><div>在线阅读地址：<a
+            href="http://www.share345.com/books/design-app-backend/design-app-backend.html">http://www.share345.com/books/design-app-backend/design-app-backend.html</a>
+    </div><div><span style="font-size: 24px;">     </span></div><div><span style="font-size: 24px;">1. 前言</span>
+    </div><div><br/></div><div>     文章是根据实际项目设计以及理想状态下的优化方案，分享的app 设计思路。文章有很多不成熟甚至不合理的地方欢迎指点。</div><div>
+             希望通过阅读理解文章可以帮助你做好APP开发或者服务端接口开发之前的准备工作，文章会尽量总结遇到的坑以及设计过程中总结的问题。
+    </div><div><br/></div><div><br/></div><div><img src="Design-App-For-Backend-Developer_files/服务端客户端通信图.png"
+                                                    type="image/png" style="height: auto;"/></div><div><span
+            style="font-size: 24px;">2. 版本控制</span></div><div>   
+         服务端接口要做好版本控制，除非客户端只维护一个版本，那么意味着每次都要强制升级App，但是一般不会这么做。
+    </div><div>     版本控制的目录结构：</div><div><br/></div><div> <img
+            src="Design-App-For-Backend-Developer_files/Image.png" type="image/png" style="height: auto;"/>   <img
+            src="Design-App-For-Backend-Developer_files/Image [1].png" type="image/png" style="height: auto;"/>
+    </div><div><br/></div><div>第二种添加了区分不同平台，默认都走Default 代码，这样分的更细但是也增加了维护成本。</div><div>相应的访问资源的路由也可以采用两种方式：</div><div>
+        一种就是通过 app 传参 平台(os)和版本(version) 来执行不同代码；
+    </div><div>另一种是访问资源 URL 使用类似方式  /v1/getCustomer/id/10  /v2/getCustomer/id/10。</div><div>不同的版本维护不同 key，用于版本认证的
+        user auth 数据表举例：
+    </div><div>表：app_user_auth</div><div><br/></div><table
             style="-evernote-table:true;border-collapse:collapse;table-layout:fixed;margin-left:0px;width:100%;">
-            <tr>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
-                    <div>user_id</div>
-                </td>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
-                    <div>user_auth</div>
-                </td>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
-                    <div>sercet_key</div>
-                </td>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
-                    <div>os</div>
-                </td>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
-                    <div>created_at</div>
-                </td>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
-                    <div>updated_at</div>
-                </td>
-            </tr>
-            <tr>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
-                    <div><br/></div>
-                </td>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
-                    <div><br/></div>
-                </td>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
-                    <div><br/></div>
-                </td>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
-                    <div><br/></div>
-                </td>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
-                    <div><br/></div>
-                </td>
-                <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
-                    <div><br/></div>
-                </td>
-            </tr>
-        </table><div><br/></div><div>user_id 为自增id字段</div><div>user_auth 和 secret_key 分别是 认证的用户名 和 key 用于完成之后通信的 加解密
-        </div><div>os 为平台</div><div>created_at 创建时间</div><div>updated_at 更新时间</div><div><br/></div><div><br/></div><div>
-            <br/></div></span>
+        <tbody>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>user_id</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>user_auth</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>sercet_key</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>os</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>created_at</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>updated_at</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+        </tr>
+        </tbody>
+    </table><div><br/></div><div>user_id 为自增id字段</div><div>user_auth 和 secret_key 分别是 认证的用户名 和 key 用于完成之后通信的 加解密
+    </div><div>os 为平台</div><div>created_at 创建时间</div><div>updated_at 更新时间</div><div><br/></div><div>也可以采用 OAuth 2
+        协议进行授权认证。
+    </div><div><br/></div><div><span style="font-size: 24px;">3. 请求数据和响应数据</span></div><div>   
+         请求参数和响应的结果可以选择全部加密，也可以选择只针对敏感数据进行加密，加解密的key就是 上面的secret_key。 响应数据也可以是压缩过的，例如使用 gzip压缩。
+    </div><div>     无论服务端还是客户端，对于请求和响应都应当各自封装到一个公共函数中处理，方便之后对数据的处理。</div><div><br/></div><div><span
+            style="font-size: 16px;"><span style="font-size: 19px;">3.1 请求数据规范</span></span></div><div><span
+            style="font-size: 19px;">  </span> 出于安全考虑等因素,请求的接口应当采用 https 传输数据，可以采用 restful 风格的 web service
+        接口规范（本文没有使用 restful 风格）。所有参数使用 post方式传给服务端，敏感数据需要进行加密处理，
+    </div><div>     例如用户的密码、手机号、地址等信息。</div><div>     请求的<span style="color: rgb(227, 0, 0);">固定</span>参数包含:</div><div>
+             os: 平台  (iOS/Android)
+    </div><div>     net_status: 网络环境（Wi-Fi/3G/2G）</div><div>     version: 版本</div><div>     token:
+        会话标识(没有初始值，此值在第一个接口确定下来)
+    </div><div><br/></div><div><span style="font-size: 16px;"><span
+            style="font-size: 19px;">3.2 响应数据规范</span></span></div><div>     数据返回采用 json 格式     </div><div>
+             action: 请求的接口名称
+    </div><div>     status: 相应的状态码（自定义的错误状态码可以设置到600 以后 前面的用于 通用  http 返回的状态码  200 代表成功）</div><div>     message:
+        状态描述 例如 请求成功
+    </div><div>     data: 完整的数据</div><div>     敏感数据进行加密处理</div><div>     </div><div>     </div><div><span
+            style="font-size: 24px;">4. 通用接口</span></div><div><span style="font-size: 19px;">    </span>
+        除了第一个接口不需要判断 token参数的合法性，其它接口都需要判断，即 token存在且不过期。
+    </div><div><span style="font-size: 16px;"><span
+            style="font-size: 19px;">4.1 请求的第一个接口——get_server()</span></span></div><div>     get_server()
+        接口用于告诉客户端服务器的地址，以及完成请求的认证和建立。
+    </div><div>     接口调用优先级：启动的第一个接口，只有这个接口完成才能进行下面的接口</div><div>     请求参数：（固定的参数忽略）</div><div>app_user     </div><table
+            style="-evernote-table:true;border-collapse:collapse;table-layout:fixed;margin-left:0px;width:100%;">
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20.209059233449477%;">
+                <div>参数名</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20.209059233449477%;">
+                <div>变量类型</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是否必须</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.79094076655052%;">
+                <div>含义</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.721254355400696%;">
+                特殊说明
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>user_auth</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>string</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>认证的用户名</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>服务端和客户端分别存储协商的 de_key</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <br/></td>
+        </tr>
+    </table><div><br/></div><div>     返回参数：（固定的参数忽略）</div><div><br/></div><table
+            style="-evernote-table:true;border-collapse:collapse;margin-left:0px;table-layout:fixed;width:100%;">
+        <tr>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:20.209059233449477%;">
+                <div>参数名</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:20.209059233449477%;">
+                <div>变量类型</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是否必须</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.79094076655052%;">
+                <div>含义</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.721254355400696%;">
+                <div>特殊说明</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>en_server</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>string</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>加密后的服务器地址</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>服务端使用协商的 de_key 加密，客户端使用协商的 de_key 解密</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>token</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>string</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>会话id</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+        </tr>
+    </table><div><br/></div><div>     首先服务端和客户端协商好 user_auth 和 de_key 各自保存，就好比用户名和密码一样（可以每发一版app 协商一套 user_auth 和
+        de_key） 。请求get_server接口只需要传递 user_auth 即可，服务端根据 user_auth 确定请求的客户端的 de_key。未找到直接退出，结束通信。找到后将 token 和
+        使用de_key加密后的服务器地址返回给客户端。客户端保存了 de_key 自然能够正确解密，由此通信建立完成。之后服务端和客户端的相互认证都采用 token 来认证，token 被截取存在中间人攻击，所以建议采用
+        https 保障数据安全。token也应当设计过期时间，且token 和 用户id应当一一对应，保证客户只能在一处登录。
+    </div><div>     如下是会话列表数据表设计举例：</div><div>app_token</div><table
+            style="-evernote-table:true;border-collapse:collapse;table-layout:fixed;margin-left:0px;width:100%;">
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>id</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>customer_id</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>token</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>user_id</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>created_at</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.65505226480836%;">
+                <div>updated_at</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:16.67%;">
+                <div><br/></div>
+            </td>
+        </tr>
+    </table><div><br/></div><div>id 为自增主键</div><div>customer_id 为用户id</div><div>token 为会话id（不可重复）</div><div>user_id
+        是表 app_user 的user_id 用于找到加解密使用 de_key
+    </div><div>成功调用 get_server() 接口，添加一行数据 完善 token, user_id, created_at, updated_at  之后每次调用其它接口都更新下 updated_at
+        （判断过期与否是当前时间和 updated_at 做比较），直到用户登录完善 customer_id
+    </div><div>这里存在几种情况：</div><div>1.用户之前从未登录过： 那么直接更新这一行数据 添上 customer_id 即可</div><div>2.用户之前登录过: 那么可以将token,
+        user_id, updated_at 更新到原来那行数据，然后删除此条数据（当然也可以反过来，保留最新这条数据，删除以前的。但无论那种都要采用事务，保证完成）
+    </div><div><br/></div><div><span style="font-size: 16px;"><span style="font-size: 19px;">4.2 发送设备标识接口——send_flag()</span></span>
+    </div><div>     用于后续发送推送等需求。</div><div>     接口调用优先级：系统启动时候调用即可</div><div>     请求参数：（固定的参数忽略）</div><table
+            style="-evernote-table:true;border-collapse:collapse;table-layout:fixed;margin-left:0px;width:100%;">
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20.209059233449477%;">
+                <div>参数名</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20.209059233449477%;">
+                <div>变量类型</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是否必须</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.79094076655052%;">
+                <div>含义</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.721254355400696%;">
+                <div>特殊说明</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>flag</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>string</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>否</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>设备唯一标识</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>设备标识</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+        </tr>
+    </table><div>     返回参数：（固定的参数忽略）</div><table
+            style="-evernote-table:true;border-collapse:collapse;margin-left:0px;table-layout:fixed;width:100%;">
+        <tbody>
+        <tr>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:20.209059233449477%;">
+                <div>参数名</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:20.209059233449477%;">
+                <div>变量类型</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是否必须</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.79094076655052%;">
+                <div>含义</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.721254355400696%;">
+                <div>特殊说明</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>flag</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>string</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>设备唯一标识</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>设备标识</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <br/></td>
+        </tr>
+        </tbody>
+    </table><div><br/></div><div>     正常情况下，每个设备都能获取到对应的唯一标识，用于完成消息的推送，Android手机通常根据 MEI
+        来做标识，但是仍然存在获取不到的情况，所以此时服务端就要生成一个随机的且唯一的标识返回给客户端。客户端接收到参数保存下来即可。
+    </div><div>     如下是设备标识列表数据表设计举例：</div><div>app_equipment_flag</div><div><br/></div><table
+            style="-evernote-table:true;border-collapse:collapse;width:100%;table-layout:fixed;margin-left:0px;">
+        <tbody>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div>id</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div>flag</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div>badge</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div>token</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div>customer_id</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div>os</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div>version</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div><br/></div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:14.29%;">
+                <div><br/></div>
+            </td>
+        </tr>
+        </tbody>
+    </table><div><br/></div><div>id 为自增主键</div><div>flag 为设备的唯一标识</div><div>badge 角标，通常 iOS 设备会有角标</div><div>token
+        会话id
+    </div><div>customer_id 用户id</div><div>os 设备平台 iOS 或者 Android</div><div>version app版本</div><div>成功调用 send_flag()
+        接口，判断flag 是否已经存在，不存在则添加，存在则更新数据。每发一条消息 badge 加1 之后还有设置角标的接口可以把角标清0等。
+    </div><div><br/></div><div><span style="font-size: 16px;"><span
+            style="font-size: 19px;">4.2 设置角标接口——set_badge()</span></span></div><div>     这个接口只需要给
+        iOS系统调用，可以采用最简单的方式，即每次调用就将badge清0
+    </div><div>     接口调用优先级：需要清除角标的时候调用即可。</div><div>     请求参数：（固定的参数忽略）</div><table
+            style="-evernote-table:true;border-collapse:collapse;table-layout:fixed;margin-left:0px;width:100%;">
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20.209059233449477%;">
+                <div>参数名</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20.209059233449477%;">
+                <div>变量类型</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是否必须</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.79094076655052%;">
+                <div>含义</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.721254355400696%;">
+                <div>特殊说明</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>flag</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>string</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                是
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>设备唯一标识</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>设备标识</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>badge</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>int</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>设置角标的数量</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+        </tr>
+    </table><div>     返回参数：（固定的参数忽略） 返回成功或失败即可</div><div>     </div><div><span style="font-size: 16px;"><span
+            style="font-size: 19px;">4.3 升级检测——check_version()</span></span></div><div>     用于检测是否有新版本，并提示升级。
+    </div><div>     接口调用优先级：启动成功后调用，有些app在设置里有检测最新版本功能，在那里也可以调用此接口</div><div>     </div><div> 请求参数：（固定的参数忽略）
+        不需要其它参数
+    </div><div><br/></div><div> 返回参数：（固定的参数忽略）</div><table
+            style="-evernote-table:true;border-collapse:collapse;margin-left:0px;table-layout:fixed;width:100%;">
+        <tr>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:20.209059233449477%;">
+                <div>参数名</div>
+            </td>
+            <td style="border: 1px solid rgb(211, 211, 211); padding: 10px; margin: 0px;width:20.209059233449477%;">
+                <div>变量类型</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是否必须</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.79094076655052%;">
+                <div>含义</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:19.721254355400696%;">
+                <div>特殊说明</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>version</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>string</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>最新版本</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>version_desc</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>string</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                是
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>最新版本的介绍</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>validate</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>int</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>0：不需要升级</div>
+                <div>1：可以选择升级也可以忽略</div>
+                <div>2：必须升级</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>download_url</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>string</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>是</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div>最新app下载地址</div>
+            </td>
+            <td style="border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:20%;">
+                <div><br/></div>
+            </td>
+        </tr>
+    </table>
+    </span>
 </div>
 </body>
-</html> 
+</html>
